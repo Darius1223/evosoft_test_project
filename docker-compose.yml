@@ -1,0 +1,28 @@
+version: "3.8"
+
+
+services:
+  app:
+    image: "evosoft_test"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8310"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/evosoft_test
+      DJANGO_SETTINGS_MODULE: config.settings.production
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: "postgres"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: evosoft_test
+
+  redis:
+    image: "redis"

@@ -7,14 +7,64 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: on-failure
     ports:
       - "8000:8310"
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/evosoft_test
       DJANGO_SETTINGS_MODULE: config.settings.production
+      REDIS_URL: redis://redis:6379
+    healthcheck:
+      test: curl -sS http://localhost:8310/health/ || echo "OK"
+      interval: 5s
+      timeout: 10s
+      retries: 3
     depends_on:
       - db
       - redis
+
+  celery-worker:
+    image: "evosoft_test"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/evosoft_test
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      REDIS_URL: redis://redis:6379
+    healthcheck:
+      test: celery -A apps.core inspect ping
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    command: [ "scripts/celery-worker.sh" ]
+    depends_on:
+      - db
+      - redis
+      - app
+
+  celery-beat:
+    image: "evosoft_test"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/evosoft_test
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      REDIS_URL: redis://redis:6379
+    command: [ "scripts/celery-beat.sh" ]
+    depends_on:
+      - db
+      - redis
+      - app
+
+  celery-flower:
+    image: "evosoft_test"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/evosoft_test
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      REDIS_URL: redis://redis:6379
+    command: [ "scripts/celery-flower.sh" ]
+    ports:
+      - "5555:5555"
+    depends_on:
+      - db
+      - redis
+      - app
 
   db:
     image: "postgres"

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 import dj_database_url
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
 THIRD_PARTY_APPS = [
     "django_filters",
+    "django_celery_beat",
     "rest_framework",
 ]
 
@@ -143,3 +144,8 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 50,
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
+
+# CELERY
+REDIS_URL = os.getenv("REDIS_URL", default="redis://localhost:6379")
+BROKER_URL = REDIS_URL
+timezone = "Asia/Krasnoyarsk"

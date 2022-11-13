@@ -10,4 +10,4 @@ python manage.py collectstatic --noinput
 
 echo "Start gunicorn [wsgi] application"
 
-gunicorn --workers 2 -b "0.0.0.0:8310" --threads 2 config.wsgi
+gunicorn --workers 2 -b "0.0.0.0:8310" --threads 2 --access-logfile '-' config.wsgi

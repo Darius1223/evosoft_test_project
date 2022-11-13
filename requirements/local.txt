@@ -1,2 +1,4 @@
 -r base.txt
 -r lint.txt
+
+pre-commit==2.20.0

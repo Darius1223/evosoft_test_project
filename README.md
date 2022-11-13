@@ -62,3 +62,12 @@ celery -A apps.core worker --loglevel=INFO --concurrency=10
 ```
 
 6. Приложение доступно по `http://locahost:8000/`, flower по `http://locahost:5555/`
+
+
+### Pre-commits
+
+Для установки git хуков, воспользуйтесь:
+
+```shell
+pre-commit install
+```
